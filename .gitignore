@@ -1,0 +1,40 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+
+# Build
+dist/
+build/
+synology/
+
+# Testing
+playwright-report/
+test-results/
+frontend-tests/
+performance-testing/
+security-testing/
+playwright-tests/
+unit-test/
+
+# docs
+docs/
+Initial request/
+stories/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+#backups
+backup/
+backups/
