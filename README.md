@@ -8,6 +8,108 @@ FlashMob Games is a real-time, large-scale multiplayer gaming platform designed 
 
 ---
 
+---
+
+## 🎮 Supported Games
+
+Manage boredom with high-octane collective action:
+
+### Paddle Battle
+High-speed team-based paddle sports.
+![Paddle Battle Screenshot](screenshots/flashmob_game_paddlebattle.png)
+
+### Brick Burst
+Collaborative brick-breaking with additive impulse physics.
+![Brick Burst Screenshot](screenshots/flashmob_game_bricks.png)
+
+### Vipers
+Multi-team survival; lead your collective snake to dominance.
+![Vipers Screenshot](screenshots/flashmob_game_vipers.png)
+
+### 📱 Mobile Controller Experience
+Players join via their smartphones, which transform into dynamic controllers optimized for each game mode.
+
+| Landing Page | D-Pad Controller | 2-Button Controller |
+| :---: | :---: | :---: |
+| <img src="screenshots/flashmob_player_landing.png" height="300"> | <img src="screenshots/flashmob_player_Dpad.png" height="300"> | <img src="screenshots/flashmob_player_2button.png" height="300"> |
+
+---
+
+## 🛠️ Technical Stack
+
+Built with state-of-the-art web technologies for maximum performance and stability:
+
+- **Frontend**: 
+  - **Framework**: `React 19` + `Vite 8`
+  - **Routing**: `React Router Dom 7`
+  - **Real-time**: `Socket.io-client 4`
+  - **Styling**: Vanilla CSS (Custom Glassmorphism & HSL Design System)
+  - **Icons**: `Lucide-React`
+
+- **Backend**: 
+  - **Runtime**: `Node.js 25.5`
+  - **Server**: `Express 5`
+  - **Real-time Engine**: `Socket.io 4 (WebSockets)`
+  - **Logging**: `Pino` + `Pino-Pretty`
+  - **Validation**: `Zod` (Shared Schemas)
+  - **Auth**: `JSON Web Tokens (JWT)`
+
+---
+
+## 🕹️ Operational Management
+
+The platform includes a secured **Management Dashboard** for session operators.
+
+### 1. Accessing the Dashboard
+- **URL**: `http://localhost:5173/admin`
+- **Authentication**: Credentials are managed via the `.env` file.
+    - Default Username: `operator`
+    - Default Password: `operator`
+
+![Admin Login & Dashboard](screenshots/flashmob_adminpage.png)
+
+### 2. How to Start a Session
+1. **Initialize Room**: Log in to the dashboard and navigate to the **Initialize Room** panel.
+2. **Deploy**: Select a game type (e.g., `Brick Burst`), name your room, and click **Deploy Room**.
+3. **Control**: Manage the live session from the **Control Room**.
+   ![Control Room](screenshots/flashmob_controlroom.png)
+4. **Project**: Click **Host** to open the main game display on your projector.
+5. **Join**: Navigate to the **Join** view or show the generated QR codes. Players can scan to join the "Left" or "Right" collective.
+   <br/><img src="screenshots/flashmob_qr.png" height="300">
+6. **Results**: Celebrate the victors on the live scoreboard.
+   <br/><img src="screenshots/flashmob_scoreboard.png" height="300">
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js** 22.x or later.
+- **npm** 10.x or later.
+
+### Installation
+1. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
+2. Configure your environment:
+   ```bash
+   cp .env.example .env
+   # Update credentials in .env
+   ```
+
+### Running the Platform
+1. Start the development environment:
+   ```bash
+   npm run dev:server
+   npm run dev:client
+   ```
+2. Access the views:
+   - **Management**: `/admin`
+   - **Landing Page**: `/`
+   - **Game Display**: `/presenter`
+
+---
 
 ## 📸 System Overview
 
@@ -54,107 +156,6 @@ sequenceDiagram
     E->>S: Broadcast State
     S->>V: Frame Update (JSON)
 ```
-
----
-
-## 🎮 Supported Games
-
-Manage boredom with high-octane collective action:
-
-### Paddle Battle
-High-speed team-based paddle sports.
-![Paddle Battle Screenshot](screenshots/flashmob_game_paddlebattle.png)
-
-### Brick Burst
-Collaborative brick-breaking with additive impulse physics.
-![Brick Burst Screenshot](screenshots/flashmob_game_bricks.png)
-
-### Vipers
-Multi-team survival; lead your collective snake to dominance.
-![Vipers Screenshot](screenshots/flashmob_game_vipers.png)
-
-### 📱 Mobile Controller Experience
-Players join via their smartphones, which transform into dynamic controllers optimized for each game mode.
-
-| Landing Page | D-Pad Controller | 2-Button Controller |
-| :---: | :---: | :---: |
-| ![Landing](screenshots/flashmob_player_landing.png) | ![D-Pad](screenshots/flashmob_player_Dpad.png) | ![2-Button](screenshots/flashmob_player_2button.png) |
-
----
-
-## 🛠️ Technical Stack
-
-Built with state-of-the-art web technologies for maximum performance and stability:
-
-- **Frontend**: 
-  - **Framework**: `React 19` + `Vite 8`
-  - **Routing**: `React Router Dom 7`
-  - **Real-time**: `Socket.io-client 4`
-  - **Styling**: Vanilla CSS (Custom Glassmorphism & HSL Design System)
-  - **Icons**: `Lucide-React`
-
-- **Backend**: 
-  - **Runtime**: `Node.js 25.5`
-  - **Server**: `Express 5`
-  - **Real-time Engine**: `Socket.io 4 (WebSockets)`
-  - **Logging**: `Pino` + `Pino-Pretty`
-  - **Validation**: `Zod` (Shared Schemas)
-  - **Auth**: `JSON Web Tokens (JWT)`
-
----
-
-## 🕹️ Operational Management
-
-The platform includes a secured **Management Dashboard** for session operators.
-
-### 1. Accessing the Dashboard
-- **URL**: `http://localhost:5173/admin`
-- **Authentication**: Credentials are managed via the `.env` file.
-    - Default Username: `operator`
-    - Default Password: `operator`
-
-![Admin Login & Dashboard](screenshots/flashmob_adminpage.png)
-
-### 2. How to Start a Session
-1. **Initialize Room**: Log in to the dashboard and navigate to the **Initialize Room** panel.
-2. **Deploy**: Select a game type (e.g., `Brick Burst`), name your room, and click **Deploy Room**.
-3. **Control**: Manage the live session from the **Control Room**.
-   ![Control Room](screenshots/flashmob_controlroom.png)
-4. **Project**: Click **Host** to open the main game display on your projector.
-5. **Join**: Navigate to the **Join** view or show the generated QR codes. Players can scan to join the "Left" or "Right" collective.
-   ![QR Onboarding](screenshots/flashmob_qr.png)
-6. **Results**: Celebrate the victors on the live scoreboard.
-   ![Scoreboard](screenshots/flashmob_scoreboard.png)
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- **Node.js** 22.x or later.
-- **npm** 10.x or later.
-
-### Installation
-1. Clone the repository and install dependencies:
-   ```bash
-   npm install
-   ```
-2. Configure your environment:
-   ```bash
-   cp .env.example .env
-   # Update credentials in .env
-   ```
-
-### Running the Platform
-1. Start the development environment:
-   ```bash
-   npm run dev:server
-   npm run dev:client
-   ```
-2. Access the views:
-   - **Management**: `/admin`
-   - **Landing Page**: `/`
-   - **Game Display**: `/presenter`
 
 ---
 
