@@ -4,7 +4,10 @@
 
 FlashMob Games is a real-time, large-scale multiplayer gaming platform designed for presentations, events, and massive audience engagement. Built with a high-performance **Node.js/Socket.io** backend and a premium **React 19** frontend, it enables hundreds of players to control shared game entities simultaneously via their smartphones.
 
+![FlashMob Games Landing](screenshots/flashmob_landing.png)
+
 ---
+
 
 ## 📸 System Overview
 
@@ -57,9 +60,25 @@ sequenceDiagram
 ## 🎮 Supported Games
 
 Manage boredom with high-octane collective action:
-- **Paddle Battle**: High-speed team-based paddle sports.
-- **Brick Burst**: Collaborative brick-breaking with additive impulse physics.
-- **Vipers**: Multi-team survival; lead your collective snake to dominance.
+
+### Paddle Battle
+High-speed team-based paddle sports.
+![Paddle Battle Screenshot](screenshots/flashmob_game_paddlebattle.png)
+
+### Brick Burst
+Collaborative brick-breaking with additive impulse physics.
+![Brick Burst Screenshot](screenshots/flashmob_game_bricks.png)
+
+### Vipers
+Multi-team survival; lead your collective snake to dominance.
+![Vipers Screenshot](screenshots/flashmob_game_vipers.png)
+
+### 📱 Mobile Controller Experience
+Players join via their smartphones, which transform into dynamic controllers optimized for each game mode.
+
+| Landing Page | D-Pad Controller | 2-Button Controller |
+| :---: | :---: | :---: |
+| ![Landing](screenshots/flashmob_player_landing.png) | ![D-Pad](screenshots/flashmob_player_Dpad.png) | ![2-Button](screenshots/flashmob_player_2button.png) |
 
 ---
 
@@ -94,11 +113,18 @@ The platform includes a secured **Management Dashboard** for session operators.
     - Default Username: `operator`
     - Default Password: `operator`
 
+![Admin Login & Dashboard](screenshots/flashmob_adminpage.png)
+
 ### 2. How to Start a Session
 1. **Initialize Room**: Log in to the dashboard and navigate to the **Initialize Room** panel.
 2. **Deploy**: Select a game type (e.g., `Brick Burst`), name your room, and click **Deploy Room**.
-3. **Project**: Click **Host** to open the main game display on your projector.
-4. **Join**: Navigate to the **Join** view or show the generated QR codes. Players can scan to join the "Left" or "Right" collective.
+3. **Control**: Manage the live session from the **Control Room**.
+   ![Control Room](screenshots/flashmob_controlroom.png)
+4. **Project**: Click **Host** to open the main game display on your projector.
+5. **Join**: Navigate to the **Join** view or show the generated QR codes. Players can scan to join the "Left" or "Right" collective.
+   ![QR Onboarding](screenshots/flashmob_qr.png)
+6. **Results**: Celebrate the victors on the live scoreboard.
+   ![Scoreboard](screenshots/flashmob_scoreboard.png)
 
 ---
 
