@@ -8,6 +8,8 @@ export const RoomCreationSchema = z.object({
     name: z.string().min(3).max(50),
     gameType: z.enum(['paddle-battle', 'vipers', 'brick-burst']).default('paddle-battle'),
     palette: z.string().default('cyber-cyan'),
+    primaryColor: z.string().optional(),
+    secondaryColor: z.string().optional(),
     config: z.record(z.string(), z.any()).optional(),
     teamNames: z.record(z.string(), z.string()).optional()
 });

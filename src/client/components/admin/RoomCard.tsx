@@ -52,7 +52,8 @@ const RoomCard: React.FC<RoomCardProps> = ({
                                 borderRadius: '4px',
                                 textTransform: 'uppercase',
                                 fontWeight: 800,
-                                letterSpacing: '1px'
+                                letterSpacing: '1px',
+                                color: 'var(--admin-accent)'
                             }}>{room.gameType || 'unknown'}</span>
                         </div>
                         {!isRedundantId && (
@@ -100,6 +101,10 @@ const RoomCard: React.FC<RoomCardProps> = ({
                     <div style={{ display: 'flex', gap: '8px' }}>
                         <Link to={`/presenter/${room.id}`} target="_blank" className="icon-btn" title="Presenter View" style={{ color: 'var(--admin-accent)' }}>
                             <MonitorPlay size={14} />
+                        </Link>
+                        <Link to={`/admin/cinematic/${room.id}`} target="_blank" className="icon-btn-special" title="Configure Cinematic Environment">
+                            <MonitorPlay size={14} />
+                            <span style={{ marginLeft: '4px' }}>Cinematic</span>
                         </Link>
                         <Link to={`/score/${room.id}`} target="_blank" className="icon-btn" title="Scoreboard" style={{ color: 'var(--admin-accent)' }}>
                             <Trophy size={14} />

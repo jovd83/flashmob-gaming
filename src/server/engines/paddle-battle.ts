@@ -9,7 +9,8 @@ import {
     BALL_RADIUS, 
     INITIAL_BALL_SPEED, 
     ACCELERATION_FACTOR,
-    PALETTES
+    PALETTES,
+    resolvePalette
 } from '../../shared/constants.js';
 import { BaseGameEngine, GameEngineConfig } from './base-engine.js';
 import { GameConfig, BaseEngineState } from '../../shared/types.js';
@@ -56,7 +57,7 @@ export class PaddleBattleEngine extends BaseGameEngine<PaddleBattleState> {
 
     constructor(config: Partial<GameEngineConfig> = {}) {
         super(config);
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         this.state = {
             width: this.width,
             height: this.height,
@@ -84,7 +85,7 @@ export class PaddleBattleEngine extends BaseGameEngine<PaddleBattleState> {
     }
 
     public getMetadata() {
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         return {
             id: 'paddle-battle',
             name: 'Paddle Battle',

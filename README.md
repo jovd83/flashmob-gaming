@@ -35,6 +35,20 @@ Players join via their smartphones, which transform into dynamic controllers opt
 
 ---
 
+## 🎬 Cinematic Room Experience
+
+Elevate your event with a **Cinematic Game Room**. Beyond simple gameplay, operators can deploy immersive environments that transform the presentation into a high-production broadcast.
+
+- **Immersive Backgrounds**: Use specialized themes or upload custom event-branded backgrounds.
+- **Integrated Telemetry**: Display real-time system performance, player counts, and live transmission stats.
+- **Dynamic Overlays**: Positioned QR codes and scoreboards designed for maximum visibility on large-scale projectors.
+
+| Cyberpunk Command | Space Bridge Terminal | Lab Broadcast Setup |
+| :---: | :---: | :---: |
+| <img src="screenshots/flashmob_cinematic1.png" height="200"> | <img src="screenshots/flashmob_cinematic2.png" height="200"> | <img src="screenshots/flashmob_cinematic3.png" height="200"> |
+
+---
+
 ## 🛠️ Technical Stack
 
 Built with state-of-the-art web technologies for maximum performance and stability:
@@ -73,7 +87,9 @@ The platform includes a secured **Management Dashboard** for session operators.
 2. **Deploy**: Select a game type (e.g., `Brick Burst`), name your room, and click **Deploy Room**.
 3. **Control**: Manage the live session from the **Control Room**.
    ![Control Room](screenshots/flashmob_controlroom.png)
-4. **Project**: Click **Host** to open the main game display on your projector.
+4. **Project**: Select your display mode from the dashboard:
+   - Click **Host** for the standard high-performance game view.
+   - Click **Cinematic** to launch the immersive broadcast experience with custom branding and telemetry.
 5. **Join**: Navigate to the **Join** view or show the generated QR codes. Players can scan to join the "Left" or "Right" collective.
    <br/><img src="screenshots/flashmob_qr.png" height="300">
 6. **Results**: Celebrate the victors on the live scoreboard.

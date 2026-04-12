@@ -20,10 +20,7 @@ const PlayerController: React.FC = () => {
   const [gyroPermission, setGyroPermission] = useState<'default' | 'granted' | 'denied'>('default')
   const [useGyroscope, setUseGyroscope] = useState(localStorage.getItem('use_gyroscope') !== 'false')
   const [isSecure, setIsSecure] = useState(true)
-  const [isCalibrating, setIsCalibrating] = useState(false)
   const [hasSelectedMode, setHasSelectedMode] = useState(false)
-  const lastRawOrientation = useRef({ beta: 0, gamma: 0 })
-  const gyroBaseline = useRef({ beta: 0, gamma: 0 })
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -111,43 +108,36 @@ const PlayerController: React.FC = () => {
     const handleOrientation = (event: DeviceOrientationEvent) => {
         const { beta, gamma } = event
         if (beta === null || gamma === null) return
-        
-        // Use Ref for high-precision tracking (avoids stale state in timers)
-        lastRawOrientation.current = { beta, gamma }
 
-        if (isCalibrating || !gyroActive) return;
+        if (!gyroActive) return;
 
-        // Apply relative baseline offsets (using Ref current value)
-        const relativeBeta = beta - gyroBaseline.current.beta
-        const relativeGamma = gamma - gyroBaseline.current.gamma
-
-        // Handle input based on game type
+        // Handle input based on game type using absolute orientation values
         // Vertical games (e.g. Paddle Battle side paddles)
         if (gameType === 'paddle-battle') {
             const threshold = 10;
-            if (relativeBeta > threshold) setPressedButton('down');
-            else if (relativeBeta < -threshold) setPressedButton('up');
+            if (beta > threshold) setPressedButton('down');
+            else if (beta < -threshold) setPressedButton('up');
             else setPressedButton(null);
         } 
         // Horizontal games (e.g. Brick Burst bottom paddles)
         else if (gameType === 'brick-burst') {
             const threshold = 8; // Lowered for more responsive horizontal play
-            if (relativeGamma > threshold) setPressedButton('right');
-            else if (relativeGamma < -threshold) setPressedButton('left');
+            if (gamma > threshold) setPressedButton('right');
+            else if (gamma < -threshold) setPressedButton('left');
             else setPressedButton(null);
         }
         // 4-Way games (Vipers, Pacman, etc.)
         else {
             const threshold = gameType === 'vipers' ? 8 : 12; // Lower threshold for vipers
-            const absB = Math.abs(relativeBeta);
-            const absG = Math.abs(relativeGamma);
+            const absB = Math.abs(beta);
+            const absG = Math.abs(gamma);
             
             if (absB > threshold || absG > threshold) {
                 // Determine direction based on strongest axis
                 if (absB > absG) {
-                    setPressedButton(relativeBeta > 0 ? 'down' : 'up');
+                    setPressedButton(beta > 0 ? 'down' : 'up');
                 } else {
-                    setPressedButton(relativeGamma > 0 ? 'right' : 'left');
+                    setPressedButton(gamma > 0 ? 'right' : 'left');
                 }
             } else {
                 setPressedButton(null);
@@ -170,25 +160,7 @@ const PlayerController: React.FC = () => {
     }
   }, [useGyroscope, socket, isInactive, team, gameType])
 
-  const calibrateGyro = () => {
-      // Snapshot the baseline based on the stabilized holding position
-      gyroBaseline.current = { 
-          beta: lastRawOrientation.current.beta, 
-          gamma: lastRawOrientation.current.gamma 
-      }
-      setIsCalibrating(false);
-  }
 
-  // Automatic calibration on game state changes (start of game/level)
-  useEffect(() => {
-    const status = gameState?.status;
-    if (status === 'playing' || status === 'ending' || status === 'countdown' || status === 'waiting') {
-        // FIX: Immediately lock inputs to prevent "stuck" zoom at start of round
-        setIsCalibrating(true);
-        const timer = setTimeout(calibrateGyro, 500);
-        return () => clearTimeout(timer);
-    }
-  }, [gameState?.status])
 
   const requestGyroPermission = async () => {
     const DOE = (window as any).DeviceOrientationEvent
@@ -200,8 +172,6 @@ const PlayerController: React.FC = () => {
                 setGyroActive(true)
                 setUseGyroscope(true)
                 localStorage.setItem('use_gyroscope', 'true')
-                // Immediate calibration upon granting
-                setTimeout(calibrateGyro, 200)
                 return true;
             }
         } catch (err) {
@@ -213,7 +183,6 @@ const PlayerController: React.FC = () => {
         setGyroActive(true)
         setUseGyroscope(true)
         localStorage.setItem('use_gyroscope', 'true')
-        setTimeout(calibrateGyro, 200)
         return true;
     }
     return false;
@@ -385,12 +354,7 @@ const PlayerController: React.FC = () => {
                 </div>
             )}
 
-            {team && hasSelectedMode && isCalibrating && (
-                <div style={{ position: 'fixed', top: '2rem', left: '50%', transform: 'translateX(-50%)', zIndex: 200, display: 'flex', alignItems: 'center', gap: '8px', padding: '0.75rem 1.25rem', background: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.1)', color: 'white', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
-                    <RefreshCw size={14} className="animate-spin" style={{ color: '#10b981' }} />
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.05em' }}>CALIBRATING SENSORS...</span>
-                </div>
-            )}
+
 
             {/* Controller Surface */}
             {gameType === 'paddle-battle' ? (

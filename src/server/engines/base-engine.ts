@@ -9,6 +9,8 @@ export interface GameEngineConfig {
     width: number;
     height: number;
     palette: string;
+    primaryColor?: string;
+    secondaryColor?: string;
     teamNames?: { [id: string]: string };
 }
 
@@ -16,6 +18,8 @@ export abstract class BaseGameEngine<TState extends BaseEngineState = BaseEngine
     protected width: number;
     protected height: number;
     protected palette: string;
+    protected primaryColor?: string;
+    protected secondaryColor?: string;
     protected teamNames?: { [id: string]: string };
     protected status: 'playing' | 'paused' | 'goal' | 'ending' | 'finished' | 'waiting' | 'countdown' = 'waiting';
     protected countdownValue: number = 0;
@@ -26,6 +30,8 @@ export abstract class BaseGameEngine<TState extends BaseEngineState = BaseEngine
         this.width = config.width || GAME_WIDTH;
         this.height = config.height || GAME_HEIGHT;
         this.palette = config.palette || 'cyber-cyan';
+        this.primaryColor = config.primaryColor;
+        this.secondaryColor = config.secondaryColor;
         this.teamNames = config.teamNames;
     }
 

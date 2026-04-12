@@ -43,3 +43,21 @@ export const DEFAULT_TEAM_NAMES = {
     'left': 'Alpha Squad',
     'right': 'Omega Squad'
 };
+
+export function resolvePalette(room?: any): Palette & { primaryGlow: string, secondaryGlow: string } {
+    if (room?.primaryColor && room.primaryColor.startsWith('#') && room?.secondaryColor && room.secondaryColor.startsWith('#')) {
+        return {
+            primary: room.primaryColor,
+            secondary: room.secondaryColor,
+            primaryGlow: `${room.primaryColor}4D`,
+            secondaryGlow: `${room.secondaryColor}4D`
+        };
+    }
+    const base = PALETTES[room?.palette || 'cyber-cyan'] || PALETTES['cyber-cyan'];
+    return {
+        primary: base.primary,
+        secondary: base.secondary,
+        primaryGlow: `${base.primary}4D`,
+        secondaryGlow: `${base.secondary}4D`
+    };
+}

@@ -19,6 +19,8 @@ interface RoomCreationFormProps {
         ballSpeed: number;
         accelerationFactor: number;
         paddleHeight: number;
+        primaryColor?: string;
+        secondaryColor?: string;
     };
     onConfigChange: (config: any) => void;
     onCreateRoom: (e: React.FormEvent) => void;
@@ -118,38 +120,95 @@ const RoomCreationForm: React.FC<RoomCreationFormProps> = ({
                 </div>
 
                 <div className="session-card">
-                    <h3 style={{ fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', marginBottom: '1.5rem' }}>Visual Environment</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
-                        {PALETTES.map(p => (
-                            <button 
-                                key={p.id}
-                                onClick={() => onConfigChange({ ...config, palette: p.id })}
-                                className={`palette-option ${config.palette === p.id ? 'active' : ''}`}
-                                type="button"
-                                style={{
-                                    background: config.palette === p.id ? 'rgba(0, 255, 204, 0.05)' : 'rgba(255,255,255,0.02)',
-                                    border: `1px solid ${config.palette === p.id ? 'var(--admin-accent)' : 'rgba(255,255,255,0.05)'}`,
-                                    padding: '1.25rem',
-                                    borderRadius: '12px',
-                                    cursor: 'pointer',
-                                    textAlign: 'left',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
+                    <h3 style={{ fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ color: 'var(--admin-accent)' }}><Settings size={18} /></span> Visual Environment
+                    </h3>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '2rem' }}>
+                        <div>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '1rem', letterSpacing: '1px' }}>Theme Presets</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {PALETTES.map(p => (
+                                    <button 
+                                        key={p.id}
+                                        onClick={() => onConfigChange({ ...config, palette: p.id, primaryColor: '', secondaryColor: '' })}
+                                        className={`palette-option ${config.palette === p.id && !config.primaryColor ? 'active' : ''}`}
+                                        type="button"
+                                        style={{
+                                            background: config.palette === p.id && !config.primaryColor ? 'rgba(0, 255, 204, 0.05)' : 'rgba(255,255,255,0.02)',
+                                            border: `1px solid ${config.palette === p.id && !config.primaryColor ? 'var(--admin-accent)' : 'rgba(255,255,255,0.05)'}`,
+                                            padding: '1.25rem',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            textAlign: 'left',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        <div>
+                                            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: config.palette === p.id && !config.primaryColor ? 'white' : 'var(--admin-text-muted)' }}>{p.name}</div>
+                                            <div style={{ fontSize: '0.65rem', color: 'var(--admin-text-muted)', marginTop: '2px' }}>{p.desc}</div>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '6px' }}>
+                                            {p.colors.map((c, i) => (
+                                                <div key={i} style={{ width: '24px', height: '8px', background: c, borderRadius: '40px', boxShadow: `0 0 10px ${c}44` }}></div>
+                                            ))}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--admin-text-muted)', marginBottom: '1rem', letterSpacing: '1px' }}>Custom Atmosphere</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                 <div>
-                                    <div style={{ fontSize: '0.875rem', fontWeight: 800, color: config.palette === p.id ? 'white' : 'var(--admin-text-muted)' }}>{p.name}</div>
-                                    <div style={{ fontSize: '0.65rem', color: 'var(--admin-text-muted)', marginTop: '2px' }}>{p.desc}</div>
+                                    <label className="admin-label" style={{ marginBottom: '0.75rem', display: 'block' }}>Primary Aura</label>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                        {[
+                                            '#00f7ff', '#ff00ff', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#fbbf24', '#ffffff',
+                                            '#a855f7', '#ec4899', '#84cc16', '#06b6d4', '#f97316', '#6366f1', '#14b8a6', '#facc15',
+                                            '#00ffaa', '#ff0055', '#7000ff', '#20ffd0', '#ccff00', '#ff4d00'
+                                        ].map(c => (
+                                            <button 
+                                                key={c} type="button"
+                                                onClick={() => onConfigChange({ ...config, primaryColor: c, secondaryColor: config.secondaryColor || '#ff00ff' })}
+                                                style={{ 
+                                                    width: '16px', height: '16px', flexShrink: 0, background: c, borderRadius: '4px', cursor: 'pointer',
+                                                    border: config.primaryColor === c ? '2px solid white' : '1px solid rgba(255,255,255,0.1)',
+                                                    transform: config.primaryColor === c ? 'scale(1.2)' : 'none',
+                                                    boxShadow: config.primaryColor === c ? `0 0 10px ${c}` : 'none'
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '6px' }}>
-                                    {p.colors.map((c, i) => (
-                                        <div key={i} style={{ width: '24px', height: '8px', background: c, borderRadius: '40px', boxShadow: `0 0 10px ${c}44` }}></div>
-                                    ))}
+
+                                <div>
+                                    <label className="admin-label" style={{ marginBottom: '0.75rem', display: 'block' }}>Secondary Aura</label>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                        {[
+                                            '#00f7ff', '#ff00ff', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#fbbf24', '#ffffff',
+                                            '#a855f7', '#ec4899', '#84cc16', '#06b6d4', '#f97316', '#6366f1', '#14b8a6', '#facc15',
+                                            '#00ffaa', '#ff0055', '#7000ff', '#20ffd0', '#ccff00', '#ff4d00'
+                                        ].map(c => (
+                                            <button 
+                                                key={c} type="button"
+                                                onClick={() => onConfigChange({ ...config, secondaryColor: c, primaryColor: config.primaryColor || '#00f7ff' })}
+                                                style={{ 
+                                                    width: '16px', height: '16px', flexShrink: 0, background: c, borderRadius: '4px', cursor: 'pointer',
+                                                    border: config.secondaryColor === c ? '2px solid white' : '1px solid rgba(255,255,255,0.1)',
+                                                    transform: config.secondaryColor === c ? 'scale(1.2)' : 'none',
+                                                    boxShadow: config.secondaryColor === c ? `0 0 10px ${c}` : 'none'
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
-                            </button>
-                        ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

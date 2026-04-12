@@ -15,12 +15,7 @@ import GameTelemetryPanel from './GameTelemetryPanel.js';
 import { Room } from '../../shared/types.js';
 import './PresenterStyles.css';
 
-export const PALETTES: { [key: string]: any } = {
-    'cyber-cyan': { primary: '#00f7ff', secondary: '#ff00ff', primaryGlow: 'rgba(0, 247, 255, 0.3)', secondaryGlow: 'rgba(255, 0, 255, 0.3)' },
-    'sunset-glow': { primary: '#f59e0b', secondary: '#ef4444', primaryGlow: 'rgba(245, 158, 11, 0.3)', secondaryGlow: 'rgba(239, 68, 68, 0.3)' },
-    'deep-sapphire': { primary: '#3b82f6', secondary: '#fbbf24', primaryGlow: 'rgba(59, 130, 246, 0.3)', secondaryGlow: 'rgba(251, 191, 36, 0.3)' },
-    'matrix-green': { primary: '#10b981', secondary: '#ffffff', primaryGlow: 'rgba(16, 185, 129, 0.3)', secondaryGlow: 'rgba(255, 255, 255, 0.3)' }
-};
+import { resolvePalette } from '../../shared/constants.js';
 
 
 const PresenterView: React.FC = () => {
@@ -178,7 +173,7 @@ const PresenterView: React.FC = () => {
         ctx.shadowBlur = 0;
     }, [gameState]);
 
-    const palette = PALETTES[room?.palette || 'cyber-cyan'] || PALETTES['cyber-cyan'];
+    const palette = resolvePalette(room);
 
     // Extract team data for the scoreboard
     const teams = gameState?.teams ? Object.values(gameState.teams) as any[] : [];

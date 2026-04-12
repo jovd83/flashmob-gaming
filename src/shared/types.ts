@@ -19,11 +19,32 @@ export interface TeamMetadata {
     color: string;
 }
 
+export interface CinematicElement {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    visible: boolean;
+}
+
+export interface CinematicLayout {
+    backgroundUrl?: string;
+    elements: {
+        projector: CinematicElement;
+        scoreboard: CinematicElement;
+        qrLeft: CinematicElement;
+        qrRight: CinematicElement;
+        telemetry: CinematicElement;
+    };
+}
+
 export interface Room {
     id: string;
     name: string;
     gameType: string;
     palette: string;
+    primaryColor?: string;
+    secondaryColor?: string;
     config: GameConfig;
     teamNames?: { [id: string]: string };
     isSimulation?: boolean;
@@ -33,7 +54,9 @@ export interface Room {
         name: string;
         requiredTeams: TeamMetadata[];
     };
+    cinematicLayout?: CinematicLayout;
     state?: BaseEngineState;
+    updatedAt?: number;
 }
 
 export interface RoomState {

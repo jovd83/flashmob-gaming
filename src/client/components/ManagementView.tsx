@@ -41,6 +41,8 @@ const ManagementView: React.FC = () => {
     const [config, setConfig] = useState({
         gameType: 'paddle-battle',
         palette: 'cyber-cyan',
+        primaryColor: '',
+        secondaryColor: '',
         ballSpeed: 3,
         accelerationFactor: 1.05,
         paddleHeight: 80
@@ -103,6 +105,8 @@ const ManagementView: React.FC = () => {
                 name: newRoomName, 
                 gameType: config.gameType,
                 palette: config.palette,
+                primaryColor: (config.primaryColor && config.primaryColor.length > 0) ? config.primaryColor : undefined,
+                secondaryColor: (config.secondaryColor && config.secondaryColor.length > 0) ? config.secondaryColor : undefined,
                 teamNames: { left: team1Name, right: team2Name },
                 config: {
                     ballSpeed: config.ballSpeed,
@@ -135,6 +139,14 @@ const ManagementView: React.FC = () => {
 
     const handleResetScore = async (id: string) => {
         await fetchWithAuth(`/api/rooms/${id}/reset-score`, { method: 'POST' });
+    };
+
+    const handleSetGameType = async (id: string, gameType: string) => {
+        await fetchWithAuth(`/api/rooms/${id}/game-type`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameType })
+        });
     };
 
     const handleEndGame = async (id: string) => {

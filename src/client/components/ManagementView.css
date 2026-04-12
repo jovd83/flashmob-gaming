@@ -250,9 +250,31 @@
 }
 
 .icon-btn.danger:hover {
-  background: rgba(244, 63, 94, 0.2);
-  color: var(--admin-danger);
-  border-color: var(--admin-danger);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.icon-btn-special {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: var(--admin-accent);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 15px var(--admin-accent-glow);
+}
+
+.icon-btn-special:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px var(--admin-accent-glow);
+    filter: brightness(1.1);
 }
 
 .status-pip {

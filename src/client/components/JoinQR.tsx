@@ -77,25 +77,12 @@ const JoinQR: React.FC<JoinQRProps> = ({ side: propSide, minimal }) => {
 
     if (minimal) {
         return (
-            <div className="qr-minimal" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                <div style={{ 
-                    background: 'white', 
-                    padding: '4px', 
-                    borderRadius: '10px',
-                    boxShadow: `0 0 16px ${currentTeam.color}33`
-                }}>
-                    <QRCodeSVG value={qrUrl} size={110} level="H" />
+            <div className="qr-presenter-minimal-fix" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1cqh' }}>
+                <div className="qr-presenter-code-box" style={{ background: 'white', padding: '4%', borderRadius: '1cqw', width: '90%', maxWidth: '90%', aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <QRCodeSVG value={qrUrl} size={256} level="H" style={{ width: '100%', height: '100%', display: 'block' }} />
                 </div>
-                <div style={{ 
-                    color: currentTeam.color, 
-                    fontSize: '0.6rem', 
-                    fontWeight: 900, 
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    textShadow: `0 0 8px ${currentTeam.color}55`,
-                    marginTop: '-2px'
-                }}>
-                    Join {displayName}
+                <div className="qr-presenter-label" style={{ color: currentTeam.color, fontSize: 'min(10cqh, 4cqw)', fontWeight: '800', textTransform: 'uppercase', textAlign: 'center', letterSpacing: '0.2cqw' }}>
+                    JOIN {displayName}
                 </div>
             </div>
         );

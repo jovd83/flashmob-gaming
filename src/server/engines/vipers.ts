@@ -3,7 +3,7 @@
  * FlashMob Gaming Platform - The Collective Gaming Experience
  */
 import { BaseGameEngine, GameEngineConfig } from './base-engine.js';
-import { PALETTES } from '../../shared/constants.js';
+import { PALETTES, resolvePalette } from '../../shared/constants.js';
 import { logger } from '../utils/logger.js';
 import { BaseEngineState } from '../../shared/types.js';
 
@@ -46,7 +46,7 @@ export class VipersEngine extends BaseGameEngine<VipersState> {
         const cols = Math.floor(this.width / gridSize);
         const rows = Math.floor(this.height / gridSize);
         
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
 
         this.state = {
             width: this.width,
@@ -279,7 +279,7 @@ export class VipersEngine extends BaseGameEngine<VipersState> {
     }
 
     public getMetadata() {
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         return {
             id: 'vipers',
             name: 'Vipers',

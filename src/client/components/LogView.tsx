@@ -8,13 +8,7 @@ import { useSocket } from '../context/SocketContext.js';
 import ActivityLog from './ActivityLog.js';
 import GameTelemetryPanel from './GameTelemetryPanel.js';
 import { Room, BaseEngineState } from '../../shared/types.js';
-
-const PALETTES: { [key: string]: any } = {
-    'cyber-cyan': { primary: '#00f7ff', secondary: '#ff00ff' },
-    'sunset-glow': { primary: '#f59e0b', secondary: '#ef4444' },
-    'deep-sapphire': { primary: '#3b82f6', secondary: '#fbbf24' },
-    'matrix-green': { primary: '#10b981', secondary: '#ffffff' }
-};
+import { resolvePalette } from '../../shared/constants.js';
 
 const LogView: React.FC = () => {
     const { socket } = useSocket();
@@ -51,7 +45,7 @@ const LogView: React.FC = () => {
 
     if (!roomId) return <div style={{ color: 'white', padding: '20px' }}>No Room Specified</div>;
 
-    const palette = PALETTES[room?.palette || 'cyber-cyan'] || PALETTES['cyber-cyan'];
+    const palette = resolvePalette(room);
     const accentColor = palette.primary;
 
     return (

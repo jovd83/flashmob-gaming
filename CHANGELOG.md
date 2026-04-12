@@ -13,4 +13,6 @@
 ## [Unreleased]
 ### Added
 - Player counts in playfield corners with team-matching colors and glow effects.
-- Dynamic team identification and special handling for Pacman player distribution.
+### Fixed
+- QR code labels in cinematic rooms now scale proportionally with room element resizing using container query units (cqw/cqh).
+- Consistent typography scaling across all cinematic elements including scoreboard and QR portals.

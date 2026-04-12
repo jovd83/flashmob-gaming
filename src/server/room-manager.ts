@@ -50,9 +50,9 @@ export class RoomManager {
         await this.repository.saveAll(roomsArray);
     }
 
-    private createEngineInstance(gameType: string, palette: string = 'cyber-cyan', teamNames?: { [id: string]: string }): BaseGameEngine<any> {
+    private createEngineInstance(gameType: string, palette: string = 'cyber-cyan', teamNames?: { [id: string]: string }, primaryColor?: string, secondaryColor?: string): BaseGameEngine<any> {
         logger.debug({ gameType, palette }, 'Creating engine instance');
-        const config = { width: GAME_WIDTH, height: GAME_HEIGHT, palette, teamNames };
+        const config = { width: GAME_WIDTH, height: GAME_HEIGHT, palette, teamNames, primaryColor, secondaryColor };
         switch (gameType) {
             case 'vipers':
                 return new VipersEngine(config);
@@ -69,7 +69,7 @@ export class RoomManager {
         if (!room) return;
 
         logger.debug({ roomId, palette: room.palette }, 'Initializing engine');
-        const engine = this.createEngineInstance(room.gameType, room.palette, room.teamNames);
+        const engine = this.createEngineInstance(room.gameType, room.palette, room.teamNames, room.primaryColor, room.secondaryColor);
         
         // Generic Event Subscriptions
         const relay = (type: string) => (data: any) => {
@@ -88,7 +88,15 @@ export class RoomManager {
         this.engines.set(roomId, engine);
     }
 
-    public async createRoom(name: string, gameType: string = 'paddle-battle', config?: GameConfig, palette: string = 'cyber-cyan', teamNames?: { [id: string]: string }): Promise<Room> {
+    public async createRoom(
+        name: string, 
+        gameType: string = 'paddle-battle', 
+        config?: GameConfig, 
+        palette: string = 'cyber-cyan', 
+        teamNames?: { [id: string]: string },
+        primaryColor?: string,
+        secondaryColor?: string
+    ): Promise<Room> {
         const id = this.generateId(name);
         
         logger.info({ roomId: id, name, gameType }, 'Creating new room');
@@ -97,6 +105,8 @@ export class RoomManager {
             name, 
             gameType, 
             palette, 
+            primaryColor,
+            secondaryColor,
             config: config || this.getDefaultConfig(gameType),
             teamNames
         };
@@ -208,6 +218,72 @@ export class RoomManager {
             room.config = { ...room.config, ...config };
             engine.updateConfig(config);
             await this.saveRooms();
+        }
+    }
+
+    public async setGameType(id: string, gameType: string) {
+        const room = this.rooms.get(id);
+        if (!room) return;
+
+        logger.info({ roomId: id, from: room.gameType, to: gameType }, 'Switching game type');
+        
+        // 1. Destroy old engine
+        const oldEngine = this.engines.get(id);
+        if (oldEngine) {
+            oldEngine.destroy();
+        }
+
+        // 2. Update room metadata
+        room.gameType = gameType;
+        room.config = this.getDefaultConfig(gameType);
+
+        // 3. Re-initialize engine
+        this.initializeEngine(id);
+        
+        // 4. Persistence
+        if (!room.isSimulation) {
+            await this.saveRooms();
+        }
+    }
+
+    public async setCinematicLayout(id: string, layout: any) {
+        const room = this.rooms.get(id);
+        if (room) {
+            // Backend Sanitization: Ensure elements exists
+            const sanitized = layout || { elements: {} };
+            if (!sanitized.elements) sanitized.elements = {};
+            
+            room.cinematicLayout = sanitized;
+            room.updatedAt = Date.now();
+            if (!room.isSimulation) {
+                await this.saveRooms();
+            }
+        }
+    }
+
+    public async setCinematicBackground(id: string, url: string) {
+        const room = this.rooms.get(id);
+        if (room) {
+            if (!room.cinematicLayout) {
+                // Initialize with complete minimal layout structure to prevent missing elements in the UI
+                room.cinematicLayout = { elements: {} as any };
+            }
+            room.cinematicLayout.backgroundUrl = url;
+            room.updatedAt = Date.now();
+            if (!room.isSimulation) {
+                await this.saveRooms();
+            }
+        }
+    }
+    public async setRoomColors(id: string, primary: string, secondary: string) {
+        const room = this.rooms.get(id);
+        if (room) {
+            room.primaryColor = primary;
+            room.secondaryColor = secondary;
+            room.updatedAt = Date.now();
+            if (!room.isSimulation) {
+                await this.saveRooms();
+            }
         }
     }
 }

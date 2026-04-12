@@ -11,7 +11,10 @@ import { SimulationService } from './services/simulation-service.js';
 import { LoginSchema, RoomCreationSchema } from '../shared/schemas.js';
 import { logger } from './utils/logger.js';
 import { JWTUtil } from './utils/jwt-util.js';
-import { Room } from '../shared/types.js';
+import { Room, CinematicLayout } from '../shared/types.js';
+import multer from 'multer';
+import fs from 'fs/promises';
+import { existsSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +37,10 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
         }
         return '127.0.0.1';
     };
+
+    app.get('/api/health', (req, res) => {
+        res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    });
 
     app.get('/api/network-info', (req, res) => {
         res.json({
@@ -99,10 +106,10 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
             return res.status(400).json({ error: 'Validation failed', details: result.error.format() });
         }
 
-        const { name, gameType, config, palette, teamNames } = result.data;
+        const { name, gameType, config, palette, teamNames, primaryColor, secondaryColor } = result.data;
         logger.info({ roomId: name, gameType }, 'API request: Create room');
         
-        const room = await roomManager.createRoom(name, gameType, config, palette, teamNames);
+        const room = await roomManager.createRoom(name, gameType, config, palette, teamNames, primaryColor, secondaryColor);
         broadcastRooms();
         res.status(201).json(room);
     });
@@ -130,6 +137,23 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
             engine.reset();
             broadcastRooms();
             res.json({ message: 'Score reset' });
+        } else {
+            res.status(404).json({ error: 'Room not found' });
+        }
+    });
+
+    app.post('/api/rooms/:id/game-type', authMiddleware, async (req, res) => {
+        const { gameType } = req.body;
+        const id = req.params.id as string;
+        
+        if (!gameType) {
+            return res.status(400).json({ error: 'Missing gameType' });
+        }
+
+        if (roomManager.getRoom(id)) {
+            await roomManager.setGameType(id, gameType);
+            broadcastRooms();
+            res.json({ message: 'Game type updated', gameType });
         } else {
             res.status(404).json({ error: 'Room not found' });
         }
@@ -174,7 +198,81 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
         res.json(simulationService.getMetrics());
     });
 
+    // --- Cinematic Editor API ---
+
+    // Multer setup for background uploads
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'public/uploads/cinematic/');
+        },
+        filename: (req, file, cb) => {
+            const roomId = req.params.id || 'default';
+            const ext = path.extname(file.originalname);
+            cb(null, `bg-${roomId}-${Date.now()}${ext}`);
+        }
+    });
+    const upload = multer({ 
+        storage,
+        limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+        fileFilter: (req, file, cb) => {
+            if (file.mimetype.startsWith('image/')) cb(null, true);
+            else cb(new Error('Only images are allowed'));
+        }
+    });
+
+    const DEFAULT_LAYOUT_FILE = path.join(__dirname, './data/default-cinematic.json');
+
+    app.get('/api/cinematic/default', async (req, res) => {
+        try {
+            if (existsSync(DEFAULT_LAYOUT_FILE)) {
+                const data = await fs.readFile(DEFAULT_LAYOUT_FILE, 'utf8');
+                res.json(JSON.parse(data));
+            } else {
+                res.status(404).json({ error: 'Default layout not found' });
+            }
+        } catch (err) {
+            res.status(500).json({ error: 'Error loading default layout' });
+        }
+    });
+
+    app.post('/api/cinematic/default', authMiddleware, async (req, res) => {
+        try {
+            await fs.writeFile(DEFAULT_LAYOUT_FILE, JSON.stringify(req.body, null, 2));
+            res.json({ message: 'Global default layout updated' });
+        } catch (err) {
+            res.status(500).json({ error: 'Error saving default layout' });
+        }
+    });
+
+    app.post('/api/rooms/:id/cinematic/upload', authMiddleware, upload.single('background'), async (req, res) => {
+        const id = req.params.id as string;
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const fileUrl = `/uploads/cinematic/${req.file.filename}`;
+        await roomManager.setCinematicBackground(id, fileUrl);
+        broadcastRooms();
+        res.json({ url: fileUrl });
+    });
+
+    app.patch('/api/rooms/:id/cinematic-layout', authMiddleware, async (req, res) => {
+        const id = req.params.id as string;
+        const { primaryColor, secondaryColor, ...layout } = req.body;
+        
+        if (layout.elements) {
+            await roomManager.setCinematicLayout(id, layout);
+        }
+        
+        if (primaryColor && secondaryColor) {
+            await roomManager.setRoomColors(id, primaryColor, secondaryColor);
+        }
+        
+        broadcastRooms();
+        res.json({ message: 'Cinematic layout updated' });
+    });
+
     // Serve static files
+    app.use('/uploads', express.static(path.join(__dirname, '../../public/uploads')));
     const staticPath = path.join(__dirname, '../../dist');
     app.use(express.static(staticPath));
     app.use((req, res) => {

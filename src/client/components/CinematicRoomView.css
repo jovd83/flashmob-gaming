@@ -1,0 +1,283 @@
+/* Cinematic Room View - High Fidelity Virtual Environment */
+
+.cinematic-root {
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Outfit', sans-serif;
+    color: white;
+}
+
+.cinematic-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+/* Atmospheric Overlays */
+.cinematic-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.cinematic-lighting {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 50% 10%, rgba(255,255,255,0.1) 0%, transparent 40%),
+        radial-gradient(circle at -10% -10%, var(--palette-primary-glow) 0%, transparent 50%),
+        radial-gradient(circle at 110% 110%, var(--palette-secondary-glow) 0%, transparent 50%);
+    mix-blend-mode: screen;
+    opacity: 0.3;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Main Screen (Projector) */
+.projector-screen {
+    position: absolute;
+    top: 17%;
+    left: 28.5%;
+    width: 43%;
+    height: 48.5%;
+    z-index: 10;
+    background: rgba(0,0,0,0.8);
+    box-shadow: 
+        0 0 40px rgba(255,255,255,0.05),
+        0 0 80px var(--palette-primary-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
+}
+
+.projector-screen canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Retro TV (Scoreboard) */
+.retro-tv {
+    position: absolute;
+    top: 54.5%;
+    left: 73.2%;
+    width: 11.2%;
+    height: 15.5%;
+    z-index: 10;
+    background: #050505;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9) inset;
+    container-type: size;
+}
+
+.tv-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2cqw;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.tv-scanlines {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+    animation: scanline 10s linear infinite;
+}
+
+.tv-flicker {
+    position: absolute;
+    inset: 0;
+    background: rgba(18, 16, 16, 0.05);
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+}
+
+.tv-scores {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    text-align: center;
+}
+
+.tv-team-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+}
+
+.tv-team-val {
+    font-size: 35cqh;
+    line-height: 1;
+}
+
+.tv-team-name {
+    font-size: 8cqh;
+    text-transform: uppercase;
+    letter-spacing: 0.2cqw;
+    opacity: 0.7;
+}
+
+/* QR Minimal Scaling */
+.qr-minimal-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 4cqh;
+}
+
+.qr-code-box {
+    background: white;
+    padding: 0.8cqw;
+    border-radius: 1.5cqw;
+    box-shadow: 0 0 2cqw rgba(255, 255, 255, 0.1);
+    width: min(85cqw, 85cqh);
+    height: min(85cqw, 85cqh);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-label {
+    font-size: min(10cqh, 4cqw);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2cqw;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    white-space: nowrap;
+}
+
+/* QR Portals */
+.qr-corners {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.corner-portal {
+    position: absolute;
+    width: auto;
+    min-width: 50px;
+    min-height: 50px;
+    pointer-events: auto;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 12px;
+    transition: transform 0.3s ease;
+    container-type: size;
+}
+
+.corner-portal:hover {
+    transform: scale(1.05);
+}
+
+.corner-portal.top-left {
+}
+
+.corner-portal.top-right {
+}
+
+/* Animations */
+@keyframes scanline {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+}
+
+@keyframes flicker {
+    0% { opacity: 0.1; }
+    5% { opacity: 0.2; }
+    10% { opacity: 0.1; }
+    15% { opacity: 0.3; }
+    20% { opacity: 0.2; }
+    25% { opacity: 0.1; }
+    100% { opacity: 0.1; }
+}
+
+.projector-beam {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 200px;
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+    transform: translateX(-50%) perspective(500px) rotateX(45deg);
+    pointer-events: none;
+    z-index: 4;
+}
+
+/* Telemetry Stats Overlay */
+.telemetry-element {
+    position: absolute;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.telemetry-inner {
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.telemetry-header {
+    font-size: 0.6rem;
+    font-weight: 900;
+    opacity: 0.3;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.telemetry-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}

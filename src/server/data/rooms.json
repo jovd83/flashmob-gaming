@@ -1,7 +1,7 @@
 [
   {
-    "id": "e2e-room-1775772151788",
-    "name": "E2E-Room-1775772151788",
+    "id": "paddle-battle",
+    "name": "paddle battle",
     "gameType": "paddle-battle",
     "palette": "cyber-cyan",
     "config": {
@@ -12,67 +12,48 @@
     "teamNames": {
       "left": "Alpha Squad",
       "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "e2e-room-1775772266647",
-    "name": "E2E-Room-1775772266647",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
     },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "e2e-room-1775772297794",
-    "name": "E2E-Room-1775772297794",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
+    "cinematicLayout": {
+      "elements": {
+        "projector": {
+          "x": 30.22222222222222,
+          "y": 16.1584900973136,
+          "width": 40.27777777777778,
+          "height": 51.674641148325364,
+          "visible": true
+        },
+        "scoreboard": {
+          "x": 73.61111111111111,
+          "y": 59.561403508771924,
+          "width": 10.944444444444445,
+          "height": 16.204146730462522,
+          "visible": true
+        },
+        "qrLeft": {
+          "x": 2,
+          "y": 2.0000003893789873,
+          "width": 14.11111111111111,
+          "height": 37.89473684210527,
+          "visible": true
+        },
+        "qrRight": {
+          "x": 82.38494194878471,
+          "y": 2.0000003893789873,
+          "width": 15.666666666666668,
+          "height": 39.04306220095693,
+          "visible": true
+        },
+        "telemetry": {
+          "x": 4.5,
+          "y": 66.09250398724083,
+          "width": 12.555555555555555,
+          "height": 19.649122807017545,
+          "visible": true
+        }
+      },
+      "backgroundUrl": "/cinematic/bg.png"
     },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "debug-roomdebug-room",
-    "name": "DEBUG-ROOMDEBUG-ROOM",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "e2e-room-1775772517324",
-    "name": "E2E-Room-1775772517324",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
+    "updatedAt": 1775976770002
   },
   {
     "id": "default-room",
@@ -80,159 +61,9 @@
     "gameType": "paddle-battle",
     "palette": "cyber-cyan",
     "config": {
-      "ballSpeed": 3,
+      "ballSpeed": 2,
       "accelerationFactor": 1.05,
       "paddleHeight": 80
-    }
-  },
-  {
-    "id": "countdown-test-final",
-    "name": "Countdown Test Final",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "countdown-test-final-1",
-    "name": "Countdown Test Final",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "countdown-test-final-2",
-    "name": "Countdown-Test-Final",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "countdownb-rtiecskt-tfeisntal",
-    "name": "Countdownb rTiecskt- tFeisntal",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "brick-test-123",
-    "name": "brick-test-123",
-    "gameType": "brick-burst",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "brick-test-room",
-    "name": "brick-test-room",
-    "gameType": "brick-burst",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "final-test",
-    "name": "Final-Test",
-    "gameType": "paddle-battle",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "leveltest",
-    "name": "LevelTest",
-    "gameType": "brick-burst",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "leveltest-1",
-    "name": "LevelTest",
-    "gameType": "brick-burst",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
-    }
-  },
-  {
-    "id": "leveltest-2",
-    "name": "LevelTest",
-    "gameType": "brick-burst",
-    "palette": "cyber-cyan",
-    "config": {
-      "ballSpeed": 3,
-      "accelerationFactor": 1.05,
-      "paddleHeight": 80
-    },
-    "teamNames": {
-      "left": "Alpha Squad",
-      "right": "Omega Squad"
     }
   }
 ]

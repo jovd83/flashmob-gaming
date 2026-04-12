@@ -16,7 +16,7 @@ import {
 import { renderPaddleBattle } from '../renderers/renderPaddleBattle.js'
 import { renderVipers } from '../renderers/renderVipers.js'
 import { renderBrickBurst } from '../renderers/renderBrickBurst.js'
-import { PALETTES, PALETTES as RICH_PALETTES } from './PresenterView.js' // Reuse the glow-aware palettes
+import { resolvePalette } from '../../shared/constants.js'
 
 const GameView: React.FC = () => {
   const { socket } = useSocket()
@@ -145,7 +145,7 @@ const GameView: React.FC = () => {
         ctx.font = FONT_SECONDARY;
         ctx.fillStyle = COLOR_ACCENT;
         ctx.fillText('Check scoreboard for results', canvas.width / 2, canvas.height / 2 + 40);
-      } else if (state.status === 'playing' || gameType === 'paddle-battle') {
+      } else if (['playing', 'waiting'].includes(state.status) || gameType === 'paddle-battle') {
           // Check for missing players
           const teams = state.teams || state.entities || {};
           const missingTeams: any[] = [];
@@ -250,7 +250,7 @@ const GameView: React.FC = () => {
     }
   }, [socket, roomId, navigate])
 
-  const palette = RICH_PALETTES[room?.palette || 'cyber-cyan'] || RICH_PALETTES['cyber-cyan'];
+  const palette = resolvePalette(room);
 
   return (
     <div className="presenter-main" style={{ 

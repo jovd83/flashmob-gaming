@@ -1,0 +1,40 @@
+{
+  "elements": {
+    "projector": {
+      "x": 28.833333333333332,
+      "y": 23.29346092503987,
+      "width": 56.166666666666664,
+      "height": 47.719298245614034,
+      "visible": false
+    },
+    "scoreboard": {
+      "x": 80,
+      "y": 75,
+      "width": 10,
+      "height": 12,
+      "visible": false
+    },
+    "qrLeft": {
+      "x": 2,
+      "y": 2,
+      "width": 6,
+      "height": 9,
+      "visible": false
+    },
+    "qrRight": {
+      "x": 92,
+      "y": 2,
+      "width": 6,
+      "height": 9,
+      "visible": false
+    },
+    "telemetry": {
+      "x": 5,
+      "y": 80,
+      "width": 14,
+      "height": 10,
+      "visible": false
+    }
+  },
+  "backgroundUrl": ""
+}

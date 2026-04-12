@@ -3,7 +3,7 @@
  * FlashMob Gaming Platform - The Collective Gaming Experience
  */
 import { BaseGameEngine, GameEngineConfig } from './base-engine.js';
-import { PALETTES } from '../../shared/constants.js';
+import { PALETTES, resolvePalette } from '../../shared/constants.js';
 import { BaseEngineState } from '../../shared/types.js';
 
 interface Brick {
@@ -55,7 +55,7 @@ export class BrickBurstEngine extends BaseGameEngine<BrickBurstState> {
 
     constructor(config: Partial<GameEngineConfig> = {}) {
         super(config);
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         this.status = 'waiting';
         this.state = {
             gameType: 'brick-burst',
@@ -279,7 +279,7 @@ export class BrickBurstEngine extends BaseGameEngine<BrickBurstState> {
     }
 
     public getMetadata() {
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         return {
             id: 'brick-burst',
             name: 'Brick Burst',
@@ -294,7 +294,7 @@ export class BrickBurstEngine extends BaseGameEngine<BrickBurstState> {
     }
 
     public resetPositions() {
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         this.state.balls = [
             { x: 200, y: 300, vx: 3, vy: -3, radius: 8, teamId: 'left', color: p.primary },
             { x: 600, y: 300, vx: -3, vy: -3, radius: 8, teamId: 'right', color: p.secondary }
@@ -303,7 +303,7 @@ export class BrickBurstEngine extends BaseGameEngine<BrickBurstState> {
     }
 
     public resetScore() {
-        const p = PALETTES[this.palette] || PALETTES['cyber-cyan'];
+        const p = resolvePalette(this);
         this.state.teams = {
             left: this.createTeam('left', 0, 400, p.primary),
             right: this.createTeam('right', 400, 800, p.secondary)

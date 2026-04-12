@@ -16,6 +16,8 @@ import { QRBaseURLProvider } from './context/QRBaseURLContext.js'
 import SettingsView from './components/SettingsView.js'
 import ErrorBoundary from './components/ErrorBoundary.js'
 import LandingPage from './components/LandingPage.js'
+import CinematicRoomView from './components/CinematicRoomView.js'
+import CinematicEditorView from './components/admin/CinematicEditorView.js'
 
 const URLResolver: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -81,6 +83,9 @@ const App: React.FC = () => {
               <Route path="/qr/:roomId" element={<JoinQR />} />
               <Route path="/player/:roomId" element={<PlayerController />} />
               <Route path="/presenter/:roomId" element={<PresenterView />} />
+              <Route path="/cinematic/:roomId" element={<CinematicRoomView />} />
+              <Route path="/admin/cinematic" element={<Navigate to="/admin/cinematic/default" replace />} />
+              <Route path="/admin/cinematic/:roomId" element={<CinematicEditorView />} />
               <Route path="/logs/:roomId" element={<LogView />} />
               <Route path="/settings" element={<SettingsView />} />
               
