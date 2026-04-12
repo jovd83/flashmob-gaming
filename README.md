@@ -47,6 +47,17 @@ Elevate your event with a **Cinematic Game Room**. Beyond simple gameplay, opera
 | :---: | :---: | :---: |
 | <img src="screenshots/flashmob_cinematic1.png" height="200"> | <img src="screenshots/flashmob_cinematic2.png" height="200"> | <img src="screenshots/flashmob_cinematic3.png" height="200"> |
 
+
+---
+
+## 📺 Video Demos
+
+Experience the collective action in real-time:
+
+| Paddle Battle Presenter | Vipers Cinematic Mode | Paddle Battle Cinematic Mode |
+| :---: | :---: | :---: |
+| [![Paddle Battle Presenter](https://img.youtube.com/vi/GkCnyL_QnjY/0.jpg)](https://youtu.be/GkCnyL_QnjY) | [![Vipers Cinematic Mode](https://img.youtube.com/vi/w8lJ2S9q6jA/0.jpg)](https://youtu.be/w8lJ2S9q6jA) | [![Paddle Battle Cinematic Mode](https://img.youtube.com/vi/IgV0hRbRqQU/0.jpg)](https://youtu.be/IgV0hRbRqQU) |
+
 ---
 
 ## 🛠️ Technical Stack
