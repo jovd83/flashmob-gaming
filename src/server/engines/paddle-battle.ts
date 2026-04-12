@@ -127,9 +127,10 @@ export class PaddleBattleEngine extends BaseGameEngine<PaddleBattleState> {
         }
 
         const currentStatus = this.getStatus();
-        if (currentStatus === 'playing' || currentStatus === 'ending' || currentStatus === 'goal') {
+        if (currentStatus === 'playing' || currentStatus === 'ending' || currentStatus === 'goal' || currentStatus === 'waiting' || currentStatus === 'countdown') {
             this.movePaddles();
         }
+
 
         if (currentStatus !== 'playing') {
             this.syncState();
@@ -236,8 +237,8 @@ export class PaddleBattleEngine extends BaseGameEngine<PaddleBattleState> {
     }
 
     public handleInput(playerId: string, teamId: string, action: string) {
-        // Allow input during playing, ending, goal, and countdown
-        if (this.status !== 'playing' && this.status !== 'ending' && this.status !== 'goal' && this.status !== 'countdown') return;
+        // Allow input during playing, ending, goal, countdown, and waiting
+        if (this.status !== 'playing' && this.status !== 'ending' && this.status !== 'goal' && this.status !== 'countdown' && this.status !== 'waiting') return;
         const team = this.state.teams[teamId as 'left' | 'right'];
         if (!team) return;
 

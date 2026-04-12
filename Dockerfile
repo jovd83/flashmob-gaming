@@ -31,8 +31,10 @@ RUN npm install --omit=dev --no-audit --no-fund
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/dist-server ./dist-server
 
+# Ensure upload directory exists for persistence
+RUN mkdir -p public/uploads/cinematic
+
 # Set ownership and switch to non-root user
-# Note: Standard 'node' user in Alpine has UID 1000
 RUN chown -R node:node /app
 USER node
 

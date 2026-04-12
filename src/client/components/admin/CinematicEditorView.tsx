@@ -5,6 +5,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Rnd } from 'react-rnd';
+import { useSocket } from '../../context/SocketContext.js';
 import { Room, CinematicLayout, CinematicElement } from '../../../shared/types.js';
 import JoinQR from '../JoinQR.js';
 import { resolvePalette } from '../../../shared/constants.js';
@@ -28,6 +29,7 @@ const hexToRgb = (hex: string) => {
 const CinematicEditorView: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
     const navigate = useNavigate();
+    const { socket } = useSocket();
     const [room, setRoom] = useState<Room | null>(null);
     const [layout, setLayout] = useState<CinematicLayout | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -258,13 +260,15 @@ const CinematicEditorView: React.FC = () => {
         
         // Save immediately to persist the rescue
         setIsSaving(true);
-        socket.emit('update-room', {
-            ...room,
-            cinematicLayout: {
-                ...layout,
-                elements: rescued
-            }
-        });
+        if (socket) {
+            socket.emit('update-room', {
+                ...room,
+                cinematicLayout: {
+                    ...layout,
+                    elements: rescued
+                }
+            });
+        }
         setTimeout(() => setIsSaving(false), 500);
     };
 

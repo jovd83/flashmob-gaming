@@ -22,6 +22,12 @@ const __dirname = path.dirname(__filename);
 export function createApp(roomManager: RoomManager, broadcastRooms: () => void, simulationService: SimulationService, port: number) {
     const app = express();
     app.use(express.json());
+    
+    // Ensure upload directory exists
+    const uploadDir = path.join(__dirname, '../../public/uploads/cinematic');
+    fs.mkdir(uploadDir, { recursive: true }).catch(err => {
+        logger.error({ err, path: uploadDir }, 'Failed to create upload directory');
+    });
 
     // Helper to get local IP
     const getLocalIp = () => {

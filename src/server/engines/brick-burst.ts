@@ -122,20 +122,22 @@ export class BrickBurstEngine extends BaseGameEngine<BrickBurstState> {
             return;
         }
 
+        // Process accumulated inputs into paddle movement
+        const currentStatus = this.getStatus();
+        if (currentStatus === 'playing' || currentStatus === 'waiting' || currentStatus === 'countdown') {
+            this.movePaddles();
+        }
+
         if (this.status !== 'playing') {
             this.syncState();
             return;
         }
-
-        // Process accumulated inputs into paddle movement
-        this.movePaddles();
 
         if (!this.isReady()) {
             this.status = 'waiting';
             this.syncState();
             return;
         }
-
         this.state.balls.forEach(ball => {
 
             ball.x += ball.vx;
@@ -248,7 +250,7 @@ export class BrickBurstEngine extends BaseGameEngine<BrickBurstState> {
     }
 
     public handleInput(playerId: string, teamId: string, action: string) {
-        if (this.status !== 'playing' && this.status !== 'countdown') return;
+        if (this.status !== 'playing' && this.status !== 'countdown' && this.status !== 'waiting') return;
         const team = this.state.teams[teamId];
         if (!team) return;
         if (action === 'left') team.tickInputs.left++;

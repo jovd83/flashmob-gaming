@@ -65,5 +65,61 @@
       "accelerationFactor": 1.05,
       "paddleHeight": 80
     }
+  },
+  {
+    "id": "vsdds",
+    "name": "vsdds",
+    "gameType": "paddle-battle",
+    "palette": "deep-sapphire",
+    "config": {
+      "ballSpeed": 3,
+      "accelerationFactor": 1.05,
+      "paddleHeight": 80
+    },
+    "teamNames": {
+      "left": "Alpha Squad",
+      "right": "Omega Squad"
+    },
+    "cinematicLayout": {
+      "elements": {
+        "projector": {
+          "x": 30,
+          "y": 15,
+          "width": 35,
+          "height": 35,
+          "visible": true
+        },
+        "scoreboard": {
+          "x": 80,
+          "y": 75,
+          "width": 10,
+          "height": 12,
+          "visible": true
+        },
+        "qrLeft": {
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 9,
+          "visible": true
+        },
+        "qrRight": {
+          "x": 92,
+          "y": 2,
+          "width": 6,
+          "height": 9,
+          "visible": true
+        },
+        "telemetry": {
+          "x": 5,
+          "y": 80,
+          "width": 14,
+          "height": 10,
+          "visible": true
+        }
+      },
+      "backgroundUrl": "/uploads/cinematic/bg-vsdds-1775980280547.jpg"
+    },
+    "updatedAt": 1775980286097
   }
 ]

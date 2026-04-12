@@ -19,6 +19,7 @@ export interface ClientToServerEvents {
     'join-team': (side: string) => void;
     'move': (direction: string) => void;
     'admin-join': () => void;
+    'update-room': (room: any) => void;
 }
 
 export type InterServerEvents = Record<string, never>;

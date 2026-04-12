@@ -252,8 +252,8 @@ export class VipersEngine extends BaseGameEngine<VipersState> {
     }
 
     public handleInput(playerId: string, teamId: string, action: string) {
-        // Allow input during playing and countdown
-        if (this.status !== 'playing' && this.status !== 'countdown') return;
+        // Allow input during playing, countdown, and waiting
+        if (this.status !== 'playing' && this.status !== 'countdown' && this.status !== 'waiting') return;
         const team = this.state.teams[teamId];
         if (!team) return;
 

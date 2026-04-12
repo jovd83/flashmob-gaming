@@ -112,37 +112,35 @@ const PlayerController: React.FC = () => {
         if (!gyroActive) return;
 
         // Handle input based on game type using absolute orientation values
-        // Vertical games (e.g. Paddle Battle side paddles)
-        if (gameType === 'paddle-battle') {
-            const threshold = 10;
-            if (beta > threshold) setPressedButton('down');
-            else if (beta < -threshold) setPressedButton('up');
-            else setPressedButton(null);
-        } 
-        // Horizontal games (e.g. Brick Burst bottom paddles)
-        else if (gameType === 'brick-burst') {
-            const threshold = 8; // Lowered for more responsive horizontal play
-            if (gamma > threshold) setPressedButton('right');
-            else if (gamma < -threshold) setPressedButton('left');
-            else setPressedButton(null);
-        }
-        // 4-Way games (Vipers, Pacman, etc.)
-        else {
-            const threshold = gameType === 'vipers' ? 8 : 12; // Lower threshold for vipers
-            const absB = Math.abs(beta);
-            const absG = Math.abs(gamma);
-            
-            if (absB > threshold || absG > threshold) {
-                // Determine direction based on strongest axis
-                if (absB > absG) {
-                    setPressedButton(beta > 0 ? 'down' : 'up');
-                } else {
-                    setPressedButton(gamma > 0 ? 'right' : 'left');
+        const absB = Math.abs(beta);
+        const absG = Math.abs(gamma);
+        const threshold = (gameType === 'vipers' || gameType === 'brick-burst') ? 8 : 12;
+
+        if (absB > threshold || absG > threshold) {
+            // Determine direction based on strongest axis
+            if (absB > absG) {
+                const direction = beta > 0 ? 'down' : 'up';
+                // Only set if valid for game type
+                if (gameType === 'paddle-battle' || gameType === 'vipers') {
+                    setPressedButton(direction);
+                } else if (gameType === 'brick-burst') {
+                    // In horizontal games (landscape), beta tilt can be used for left/right
+                    setPressedButton(beta > 0 ? 'right' : 'left');
                 }
             } else {
-                setPressedButton(null);
+                const direction = gamma > 0 ? 'right' : 'left';
+                // Only set if valid for game type
+                if (gameType === 'brick-burst' || gameType === 'vipers') {
+                    setPressedButton(direction);
+                } else if (gameType === 'paddle-battle') {
+                    // In vertical games (portrait), gamma tilt (side-to-side) can be used for up/down
+                    setPressedButton(gamma > 0 ? 'down' : 'up');
+                }
             }
+        } else {
+            setPressedButton(null);
         }
+
     }
 
     const DOE = (window as any).DeviceOrientationEvent;
@@ -158,7 +156,7 @@ const PlayerController: React.FC = () => {
     return () => {
         window.removeEventListener('deviceorientation', handleOrientation)
     }
-  }, [useGyroscope, socket, isInactive, team, gameType])
+  }, [useGyroscope, socket, isInactive, team, gameType, gyroActive])
 
 
 
