@@ -35,6 +35,18 @@ stories/
 .DS_Store
 Thumbs.db
 
-#backups
+# Backups & Uploads
 backup/
 backups/
+public/uploads/
+
+# Build artifacts & archives
+*.tar
+*.zip
+*.tgz
+flashmob-gaming.tar
+
+# Logs & Test Data
+npm-debug.log*
+yarn-debug.log*
+coverage-baseline.txt
