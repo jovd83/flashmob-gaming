@@ -230,10 +230,18 @@ const CinematicRoomView: React.FC = () => {
         const handleOrientation = (e: DeviceOrientationEvent) => {
             const { beta, gamma } = e;
             if (beta === null || gamma === null) return;
+
+            // Compute robust pitch that doesn't flip at 90 degrees for stable parallax
+            const radB = (beta * Math.PI) / 180;
+            const radG = (gamma * Math.PI) / 180;
+            const gy = -Math.sin(radB) * Math.cos(radG);
+            const gz = -Math.cos(radB) * Math.cos(radG);
+            const pitch = Math.atan2(-gy, -gz) * (180 / Math.PI);
+
             // Smooth parallax effect: mapping device tilt to subtle pixel shifts
             // Centered around 45deg tilt (standard viewing angle)
             const targetX = Math.min(20, Math.max(-20, gamma * 0.3));
-            const targetY = Math.min(20, Math.max(-20, (beta - 45) * 0.3));
+            const targetY = Math.min(20, Math.max(-20, (pitch - 45) * 0.3));
             setParallax({ x: targetX, y: targetY });
         };
         window.addEventListener('deviceorientation', handleOrientation);

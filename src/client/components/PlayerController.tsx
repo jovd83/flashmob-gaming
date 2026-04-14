@@ -21,6 +21,14 @@ const PlayerController: React.FC = () => {
   const [useGyroscope, setUseGyroscope] = useState(localStorage.getItem('use_gyroscope') !== 'false')
   const [isSecure, setIsSecure] = useState(true)
   const [hasSelectedMode, setHasSelectedMode] = useState(false)
+  const baseOrientation = useRef<{ pitch: number, roll: number } | null>(null)
+
+  // Reset calibration whenever returning to mode selection (re-entering)
+  useEffect(() => {
+    if (!hasSelectedMode) {
+        baseOrientation.current = null;
+    }
+  }, [hasSelectedMode])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -111,30 +119,58 @@ const PlayerController: React.FC = () => {
 
         if (!gyroActive) return;
 
-        // Handle input based on game type using absolute orientation values
-        const absB = Math.abs(beta);
-        const absG = Math.abs(gamma);
+        // Compute robust pitch and roll that don't flip at 90 degrees
+        const radB = (beta * Math.PI) / 180;
+        const radG = (gamma * Math.PI) / 180;
+        
+        // Reconstruct gravity vector components in device frame
+        const gy = -Math.sin(radB) * Math.cos(radG);
+        const gz = -Math.cos(radB) * Math.cos(radG);
+        const gx = Math.sin(radG);
+        
+        const pitch = Math.atan2(-gy, -gz) * (180 / Math.PI);
+        const roll = Math.atan2(gx, Math.sqrt(gy * gy + gz * gz)) * (180 / Math.PI);
+
+        // Initialize base orientation on first event to set the 0-point
+        if (!baseOrientation.current) {
+            baseOrientation.current = { pitch, roll };
+            return;
+        }
+
+        // Use relative tilt values from the initial 0-point
+        let relB = pitch - baseOrientation.current.pitch;
+        let relG = roll - baseOrientation.current.roll;
+
+        // Handle wrap-around for relative values (e.g. crossing the -180/180 boundary)
+        if (relB > 180) relB -= 360;
+        if (relB < -180) relB += 360;
+        if (relG > 180) relG -= 360;
+        if (relG < -180) relG += 360;
+
+        // Handle input based on game type using relative orientation values
+        const absB = Math.abs(relB);
+        const absG = Math.abs(relG);
         const threshold = (gameType === 'vipers' || gameType === 'brick-burst') ? 8 : 12;
 
         if (absB > threshold || absG > threshold) {
             // Determine direction based on strongest axis
             if (absB > absG) {
-                const direction = beta > 0 ? 'down' : 'up';
+                const direction = relB > 0 ? 'down' : 'up';
                 // Only set if valid for game type
                 if (gameType === 'paddle-battle' || gameType === 'vipers') {
                     setPressedButton(direction);
                 } else if (gameType === 'brick-burst') {
                     // In horizontal games (landscape), beta tilt can be used for left/right
-                    setPressedButton(beta > 0 ? 'right' : 'left');
+                    setPressedButton(relB > 0 ? 'right' : 'left');
                 }
             } else {
-                const direction = gamma > 0 ? 'right' : 'left';
+                const direction = relG > 0 ? 'right' : 'left';
                 // Only set if valid for game type
                 if (gameType === 'brick-burst' || gameType === 'vipers') {
                     setPressedButton(direction);
                 } else if (gameType === 'paddle-battle') {
                     // In vertical games (portrait), gamma tilt (side-to-side) can be used for up/down
-                    setPressedButton(gamma > 0 ? 'down' : 'up');
+                    setPressedButton(relG > 0 ? 'down' : 'up');
                 }
             }
         } else {

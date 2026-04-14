@@ -19,3 +19,4 @@
 - Fixed unresponsive mobile gyroscope controls by repairing a React closure bug in the orientation listener activation sequence.
 - Enabled paddle/unit movement during the "Waiting for Participants" lobby state across all game types to provide immediate control feedback.
 - Improved gyroscope ergonomics in Single-Axis games (Brick Burst, Paddle Battle) by implementing multi-axial tilt detection, allowing play in both portrait and landscape postures.
+- Resolved gyroscope directional reversal bug by implementing gravity-vector projection math, eliminating gimbal lock and input flipping when tilting the device past vertical.
