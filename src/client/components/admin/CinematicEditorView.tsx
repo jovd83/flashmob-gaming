@@ -38,6 +38,18 @@ const CinematicEditorView: React.FC = () => {
     const [dimensionVersion, setDimensionVersion] = useState(0);
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [token, setToken] = useState<string | null>(() => {
+        const t = localStorage.getItem('admin_token');
+        return (t === 'null' || t === 'undefined') ? null : t;
+    });
+
+    // Auth Guard: Redirect if not logged in
+    useEffect(() => {
+        if (!token) {
+            console.warn('Unauthorized access to cinematic editor - redirecting');
+            navigate('/admin');
+        }
+    }, [token, navigate]);
     
     // Track window resize to force re-calculation of relative units
     useEffect(() => {
@@ -94,10 +106,7 @@ const CinematicEditorView: React.FC = () => {
                     setRoom(found);
                     const { layout: sanitized, changed } = ensureCompleteLayout(found.cinematicLayout);
                     
-                    if (!found.cinematicLayout?.backgroundUrl) {
-                        sanitized.backgroundUrl = '/cinematic/bg.png';
-                    }
-
+                    // No background fallback here - let it be null/empty if missing
                     setLayout(sanitized);
                     
                     // AUTO-RESCUE: Persist fix if database was corrupted
@@ -125,13 +134,13 @@ const CinematicEditorView: React.FC = () => {
         try {
             const endpoint = asDefault ? '/api/cinematic/default' : `/api/rooms/${roomId}/cinematic-layout`;
             const method = asDefault ? 'POST' : 'PATCH';
-            const token = localStorage.getItem('admin_token');
+            const currentToken = localStorage.getItem('admin_token');
 
             const res = await fetch(endpoint, {
                 method,
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${currentToken}`
                 },
                 body: JSON.stringify(layout)
             });
@@ -148,10 +157,21 @@ const CinematicEditorView: React.FC = () => {
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0] || !room) return;
+        
+        const file = e.target.files[0];
+        if (file.size > 10 * 1024 * 1024) {
+            alert("File too large (max 10MB)");
+            return;
+        }
+
         setUploading(true);
         const formData = new FormData();
-        formData.append('background', e.target.files[0]);
-        const token = localStorage.getItem('admin_token');
+        formData.append('background', file);
+        if (!token) {
+            alert("Your session has expired. Please log in again.");
+            navigate('/admin');
+            return;
+        }
 
         try {
             const res = await fetch(`/api/rooms/${roomId}/cinematic/upload`, {
@@ -162,13 +182,21 @@ const CinematicEditorView: React.FC = () => {
 
             if (res.ok) {
                 const data = await res.json();
+                // Persist the new background URL locally to avoid waiting for fetch
                 setLayout(prev => prev ? { ...prev, backgroundUrl: data.url } : null);
                 setBgVersion(Date.now());
+                console.log('Background upload success:', data.url);
+            } else {
+                const errData = await res.json().catch(() => ({ error: 'Upload failed' }));
+                alert(`Upload failed: ${errData.error || res.statusText}`);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Upload failed', err);
+            alert(`Upload system error: ${err.message}`);
         } finally {
             setUploading(false);
+            // Clear the input so it triggers again for the same file if needed
+            e.target.value = '';
         }
     };
 
@@ -409,7 +437,7 @@ const CinematicEditorView: React.FC = () => {
             {/* Editor Workspace */}
             <div className="editor-workspace" ref={setContainer}>
                 <div className="cinematic-bg" style={{ 
-                    backgroundImage: `url(${layout.backgroundUrl || '/cinematic/bg.png'}?v=${bgVersion})`,
+                    backgroundImage: layout.backgroundUrl ? `url("${layout.backgroundUrl}?v=${bgVersion}")` : 'none',
                     zIndex: 1
                 }} />
                 <div className="cinematic-vignette" />

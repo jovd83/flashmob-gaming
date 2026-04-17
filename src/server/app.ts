@@ -15,18 +15,65 @@ import { Room, CinematicLayout } from '../shared/types.js';
 import multer from 'multer';
 import fs from 'fs/promises';
 import { existsSync } from 'fs';
+import cors from 'cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function createApp(roomManager: RoomManager, broadcastRooms: () => void, simulationService: SimulationService, port: number) {
     const app = express();
+    app.use(cors());
+
+    const authMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Unauthorized: Missing or invalid Bearer token' });
+        }
+        
+        const token = authHeader.split(' ')[1];
+        const payload = JWTUtil.verify(token);
+        
+        if (payload && payload.role === 'admin') {
+            next();
+        } else {
+            res.status(401).json({ error: 'Unauthorized: Access denied' });
+        }
+    };
+
+    // IMPORTANT: Upload directory
+    const uploadDir = path.join(__dirname, '../../data/uploads/cinematic');
+    fs.mkdir(uploadDir, { recursive: true }).catch(() => {});
+
+    // --- CRITICAL: Upload route must be BEFORE any body parsers to avoid hangs ---
+    const memoryUpload = multer({ 
+        storage: multer.memoryStorage(),
+        limits: { fileSize: 10 * 1024 * 1024 }
+    });
+
+    app.post('/api/rooms/:id/cinematic/upload', authMiddleware, memoryUpload.single('background'), async (req, res) => {
+        const id = req.params.id as string;
+        if (!req.file) return res.status(400).json({ error: 'No file' });
+
+        try {
+            const filename = `bg-${id}-${Date.now()}${path.extname(req.file.originalname)}`;
+            await fs.writeFile(path.join(uploadDir, filename), req.file.buffer);
+            
+            const fileUrl = `/uploads/cinematic/${filename}`;
+            await roomManager.setCinematicBackground(id, fileUrl);
+            broadcastRooms();
+            
+            res.json({ url: fileUrl });
+        } catch (err: any) {
+            logger.error({ err: err.message, roomId: id }, 'Upload failed');
+            res.status(500).json({ error: 'Failed to save file' });
+        }
+    });
+
     app.use(express.json());
     
-    // Ensure upload directory exists
-    const uploadDir = path.join(__dirname, '../../public/uploads/cinematic');
+    // Help ensuring upload directory exists at startup
     fs.mkdir(uploadDir, { recursive: true }).catch(err => {
-        logger.error({ err, path: uploadDir }, 'Failed to create upload directory');
+        logger.error({ err, path: uploadDir }, 'Failed to ensure upload directory');
     });
 
     // Helper to get local IP
@@ -55,21 +102,7 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
         });
     });
 
-    const authMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Unauthorized: Missing or invalid Bearer token' });
-        }
-        
-        const token = authHeader.split(' ')[1];
-        const payload = JWTUtil.verify(token);
-        
-        if (payload && payload.role === 'admin') {
-            next();
-        } else {
-            res.status(401).json({ error: 'Unauthorized: Access denied' });
-        }
-    };
+
 
     app.post('/api/login', (req, res) => {
         const result = LoginSchema.safeParse(req.body);
@@ -102,6 +135,26 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
             res.json(rooms);
         } catch (err) {
             logger.error({ err }, 'Error listing rooms');
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
+
+    app.get('/api/rooms/:id', (req, res) => {
+        logger.info({ roomId: req.params.id }, 'API request: Get room');
+        try {
+            const room = roomManager.getRoom(req.params.id);
+            if (room) {
+                const engine = roomManager.getEngine(room.id);
+                res.json({
+                    ...room,
+                    metadata: engine?.getMetadata(),
+                    state: engine?.getState()
+                });
+            } else {
+                res.status(404).json({ error: 'Room not found' });
+            }
+        } catch (err) {
+            logger.error({ err }, 'Error fetching room');
             res.status(500).json({ error: 'Internal Server Error' });
         }
     });
@@ -204,29 +257,9 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
         res.json(simulationService.getMetrics());
     });
 
-    // --- Cinematic Editor API ---
 
-    // Multer setup for background uploads
-    const storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, 'public/uploads/cinematic/');
-        },
-        filename: (req, file, cb) => {
-            const roomId = req.params.id || 'default';
-            const ext = path.extname(file.originalname);
-            cb(null, `bg-${roomId}-${Date.now()}${ext}`);
-        }
-    });
-    const upload = multer({ 
-        storage,
-        limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-        fileFilter: (req, file, cb) => {
-            if (file.mimetype.startsWith('image/')) cb(null, true);
-            else cb(new Error('Only images are allowed'));
-        }
-    });
 
-    const DEFAULT_LAYOUT_FILE = path.join(__dirname, './data/default-cinematic.json');
+    const DEFAULT_LAYOUT_FILE = path.join(__dirname, '../../data/default-cinematic.json');
 
     app.get('/api/cinematic/default', async (req, res) => {
         try {
@@ -250,35 +283,58 @@ export function createApp(roomManager: RoomManager, broadcastRooms: () => void, 
         }
     });
 
-    app.post('/api/rooms/:id/cinematic/upload', authMiddleware, upload.single('background'), async (req, res) => {
-        const id = req.params.id as string;
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-        const fileUrl = `/uploads/cinematic/${req.file.filename}`;
-        await roomManager.setCinematicBackground(id, fileUrl);
-        broadcastRooms();
-        res.json({ url: fileUrl });
-    });
+
 
     app.patch('/api/rooms/:id/cinematic-layout', authMiddleware, async (req, res) => {
         const id = req.params.id as string;
-        const { primaryColor, secondaryColor, ...layout } = req.body;
+        logger.info({ roomId: id }, 'API request: Update cinematic layout');
         
-        if (layout.elements) {
-            await roomManager.setCinematicLayout(id, layout);
+        try {
+            const { primaryColor, secondaryColor, ...layout } = req.body;
+            
+            if (layout.elements) {
+                await roomManager.setCinematicLayout(id, layout);
+            }
+            
+            if (primaryColor && secondaryColor) {
+                await roomManager.setRoomColors(id, primaryColor, secondaryColor);
+            }
+            
+            broadcastRooms();
+            res.json({ message: 'Cinematic layout updated' });
+        } catch (err) {
+            logger.error({ err, roomId: id }, 'Critical error during layout update');
+            res.status(500).json({ error: 'Failed to save cinematic layout' });
         }
-        
-        if (primaryColor && secondaryColor) {
-            await roomManager.setRoomColors(id, primaryColor, secondaryColor);
-        }
-        
-        broadcastRooms();
-        res.json({ message: 'Cinematic layout updated' });
     });
 
     // Serve static files
-    app.use('/uploads', express.static(path.join(__dirname, '../../public/uploads')));
+    // Serve uploaded files from data/uploads/ (outside public/ to avoid watcher restarts)
+    app.use('/uploads', (req, res, next) => {
+        logger.info({ url: req.url, path: path.join(__dirname, '../../data/uploads', req.url) }, 'Static /uploads request');
+        next();
+    }, express.static(path.join(__dirname, '../../data/uploads')));
+    app.use('/cinematic', express.static(path.join(__dirname, '../../cinematic')));
+
+    // --- Global Error Handler ---
+    app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+        logger.error({ 
+            err: err.message, 
+            stack: err.stack,
+            path: req.path,
+            method: req.method
+        }, 'Unhandled application error');
+
+        if (err instanceof multer.MulterError) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ error: 'File too large (max 10MB)' });
+            }
+            return res.status(400).json({ error: `Upload error: ${err.message}` });
+        }
+
+        res.status(500).json({ error: 'Internal server error' });
+    });
+
     const staticPath = path.join(__dirname, '../../dist');
     app.use(express.static(staticPath));
     app.use((req, res) => {

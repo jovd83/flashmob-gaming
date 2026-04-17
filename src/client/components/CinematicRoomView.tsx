@@ -56,8 +56,18 @@ const CinematicRoomView: React.FC = () => {
         const handleGameState = (state: any) => setGameState(state);
         socket.on('game-state', handleGameState);
 
+        // Listen for room updates (e.g. background uploads, layout changes from admin)
+        const handleRoomUpdate = (rooms: any[]) => {
+            const found = rooms.find((r: any) => r.id === roomId);
+            if (found) {
+                setRoom(found);
+            }
+        };
+        socket.on('room-update', handleRoomUpdate);
+
         return () => {
             socket.off('game-state', handleGameState);
+            socket.off('room-update', handleRoomUpdate);
         };
     }, [roomId, socket]);
 
@@ -260,10 +270,10 @@ const CinematicRoomView: React.FC = () => {
     const palette = room ? resolvePalette(room) : { primary: '#00ffcc', secondary: '#0066ff', primaryGlow: 'rgba(0, 255, 204, 0.4)', secondaryGlow: 'rgba(0, 102, 255, 0.4)' };
     const teams = (gameState && gameState.teams) ? Object.values(gameState.teams) as any[] : [];
 
-    // Cache-stable background URL to prevent flicker. Fallback to default cinematic background if none specified.
+    // Cache-stable background URL to prevent flicker. No fallback to default cinematic background.
     const backgroundUrl = (room?.cinematicLayout?.backgroundUrl && room.cinematicLayout.backgroundUrl !== '') 
         ? `${room.cinematicLayout.backgroundUrl}?v=${room.updatedAt || 'static'}` 
-        : '/cinematic/bg.png';
+        : null;
 
     if (!room) {
         return (
@@ -283,7 +293,7 @@ const CinematicRoomView: React.FC = () => {
             <div 
                 className="cinematic-bg" 
                 style={{ 
-                    backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
+                    backgroundImage: backgroundUrl ? `url("${backgroundUrl}")` : 'none',
                     transform: `translate3d(${parallax.x}px, ${parallax.y}px, 0) scale(1.05)`,
                     transition: 'transform 0.1s ease-out'
                 }} 

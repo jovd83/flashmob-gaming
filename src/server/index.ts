@@ -17,9 +17,9 @@ import {
 import { LoginSchema, RoomCreationSchema } from '../shared/schemas.js';
 import { logger } from './utils/logger.js';
 import { SimulationService } from './services/simulation-service.js';
-import { JWTUtil } from './utils/jwt-util.js';
 import { Room, BaseEngineState } from '../shared/types.js';
 import { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from '../shared/socket-types.js';
+import { JWTUtil } from './utils/jwt-util.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -31,7 +31,7 @@ export class JWTUtil {
         try {
             return jwt.verify(token, JWT_SECRET) as JWTPayload;
         } catch (err) {
-            logger.debug({ err, token: token.substring(0, 10) + '...' }, 'JWT verification failed');
+            logger.debug({ err }, 'JWT verification failed');
             return null;
         }
     }

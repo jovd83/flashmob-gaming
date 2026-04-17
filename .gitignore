@@ -39,6 +39,7 @@ Thumbs.db
 backup/
 backups/
 public/uploads/
+data/
 
 # Build artifacts & archives
 *.tar

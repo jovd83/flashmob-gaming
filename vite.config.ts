@@ -14,12 +14,20 @@ export default defineConfig({
     host: true,
     proxy: {
       '/socket.io': {
-        target: 'http://127.0.0.1:3000',
+        target: 'http://localhost:3000',
         ws: true
       },
       '/api': {
-        target: 'http://127.0.0.1:3000',
-        changeOrigin: true
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        timeout: 60000,
+        proxyTimeout: 60000
+      },
+      '/uploads': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        timeout: 60000,
+        proxyTimeout: 60000
       }
     }
   },

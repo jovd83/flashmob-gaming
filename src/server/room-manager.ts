@@ -252,6 +252,23 @@ export class RoomManager {
             // Backend Sanitization: Ensure elements exists
             const sanitized = layout || { elements: {} };
             if (!sanitized.elements) sanitized.elements = {};
+
+            // Ensure all required components are present (Backend parity with Auto-Rescue)
+            const DEFAULT_ELEMENTS = {
+                projector: { x: 35, y: 25, width: 30, height: 30, visible: true },
+                scoreboard: { x: 80, y: 75, width: 8, height: 10, visible: true },
+                qrLeft: { x: 5, y: 75, width: 10, height: 15, visible: true },
+                qrRight: { x: 85, y: 75, width: 10, height: 15, visible: true },
+                telemetry: { x: 35, y: 80, width: 30, height: 10, visible: true }
+            };
+
+            Object.keys(DEFAULT_ELEMENTS).forEach(key => {
+                if (!sanitized.elements[key]) {
+                    sanitized.elements[key] = { ...(DEFAULT_ELEMENTS as any)[key] };
+                }
+            });
+            
+            sanitized.backgroundUrl = layout.backgroundUrl;
             
             room.cinematicLayout = sanitized;
             room.updatedAt = Date.now();
@@ -265,7 +282,7 @@ export class RoomManager {
         const room = this.rooms.get(id);
         if (room) {
             if (!room.cinematicLayout) {
-                // Initialize with complete minimal layout structure to prevent missing elements in the UI
+                // Initialize with minimal structure
                 room.cinematicLayout = { elements: {} as any };
             }
             room.cinematicLayout.backgroundUrl = url;
